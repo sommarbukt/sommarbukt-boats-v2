@@ -1,7 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login"];
+// /api/keepalive is called by Vercel Cron without a session; it checks CRON_SECRET itself
+const PUBLIC_PATHS = ["/login", "/api/keepalive"];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;

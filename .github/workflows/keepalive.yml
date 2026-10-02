@@ -2,7 +2,7 @@ name: Supabase Keepalive
 
 on:
   schedule:
-    - cron: "0 6 * * 0" # Every Sunday at 06:00 UTC
+    - cron: "17 5 * * *" # Every day at 05:17 UTC (Supabase pauses after 7 idle days)
   workflow_dispatch:     # Allow manual trigger
 
 jobs:
@@ -13,12 +13,23 @@ jobs:
         env:
           ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlueHd4and6bHprZGVjcGhudXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTYyNzAsImV4cCI6MjA5NjEzMjI3MH0.s6-0i56z_nX5KaBdnPpaPfFcWR4hFArrUAWB2ZkhOfo
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://ynxwxjwzlzkdecphnutv.supabase.co/rest/v1/boats?select=id&limit=1" \
-            -H "apikey: $ANON_KEY" \
-            -H "Authorization: Bearer $ANON_KEY")
-          echo "Supabase responded with HTTP $STATUS"
-          if [ "$STATUS" != "200" ]; then
-            echo "Unexpected status code: $STATUS"
-            exit 1
-          fi
+          for ATTEMPT in 1 2 3; do
+            # Writes a timestamp via public.keepalive(); read-only pings did not stop the pause
+            STATUS=$(curl -s -m 30 -o response.txt -w "%{http_code}" -X POST \
+              "https://ynxwxjwzlzkdecphnutv.supabase.co/rest/v1/rpc/keepalive" \
+              -H "apikey: $ANON_KEY" \
+              -H "Authorization: Bearer $ANON_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{}') || true
+            echo "Attempt $ATTEMPT: Supabase responded with HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "pinged_at: $(cat response.txt)"
+              exit 0
+            fi
+            echo "Response body:"
+            head -c 500 response.txt || true
+            echo
+            sleep 20
+          done
+          echo "::error::Supabase keepalive failed after 3 attempts (last status: $STATUS)"
+          exit 1
