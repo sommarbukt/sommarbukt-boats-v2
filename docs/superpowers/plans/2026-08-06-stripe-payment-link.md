@@ -81,7 +81,7 @@ NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/your-payment-link
 Append to `.env.local` (already gitignored, confirmed via `.gitignore`):
 
 ```
-NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/8x28wH0Vy1OadrOdXN3Nm00
+NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/your-payment-link
 ```
 
 - [ ] **Step 3: Verify `.env.local` is still ignored**
@@ -245,7 +245,7 @@ Expected on the Done step, below the existing three buttons:
 
 - [ ] **Step 4: Confirm the QR code encodes the right URL**
 
-Scan the QR code with a phone camera (or use a QR-reading browser extension) and confirm it opens `https://buy.stripe.com/8x28wH0Vy1OadrOdXN3Nm00` and shows the "Boat Rental Fee" Stripe Checkout page with an editable amount field.
+Scan the QR code with a phone camera (or use a QR-reading browser extension) and confirm it opens `https://buy.stripe.com/your-payment-link` and shows the "Boat Rental Fee" Stripe Checkout page with an editable amount field.
 
 - [ ] **Step 5: Confirm the button opens the same link in a new tab**
 
@@ -259,4 +259,4 @@ Temporarily comment out `NEXT_PUBLIC_STRIPE_PAYMENT_LINK` in `.env.local`, resta
 
 ## Deployment Note (not a plan task — inform the user)
 
-The live env var `NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/8x28wH0Vy1OadrOdXN3Nm00` must also be added to the production deployment's environment variables (e.g. Vercel project settings) — `.env.local` is not deployed.
+The live env var `NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/your-payment-link` must also be added to the production deployment's environment variables (e.g. Vercel project settings) — `.env.local` is not deployed.

@@ -1,7 +1,9 @@
 node_modules
 .next
-.env.local
-.env
+# env files: ignore every variant, keep only the template
+.env*
+!.env.example
+.vercel
 out
 *.tsbuildinfo
 dev.log
